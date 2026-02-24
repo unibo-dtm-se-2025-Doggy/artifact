@@ -1,11 +1,13 @@
-name: lint-and-type-check
+name: Web CI
 
 on:
   pull_request:
     branches: [dev]
 
 jobs:
+
   lint-and-type-check:
+    name: lint-and-type-check
     runs-on: ubuntu-latest
 
     defaults:
@@ -19,5 +21,24 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run web checks
-        run: ./scripts/check.sh
+      - run: npm ci
+      - run: npm run lint
+
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+      - run: npm run test:ci
