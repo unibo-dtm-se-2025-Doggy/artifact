@@ -1,78 +1,135 @@
 # Backend API
 
-FastAPI backend for dog recognition project.
+FastAPI backend for the Doggy project.
 
 ## Requirements
 
 - Python 3.12.8 (see `.python-version`)
-- pip
+- `pip`
+- A Bash-compatible shell for the automation scripts
+
+## Platform Setup
+
+### Windows
+
+- Install Git for Windows and use Git Bash if you want to run `./setup.sh` and `./check.sh`.
+- If you do not want to use Git Bash, follow the manual setup steps from PowerShell instead.
+- VS Code tasks in `.vscode/tasks.json` assume `bash` is available on your `PATH`.
+
+### macOS / Linux
+
+- The provided `.sh` scripts should run in the default terminal.
+- If `pyenv` is not installed, use the manual setup path instead of `./setup.sh`.
 
 ## Setup
 
-### Automatic Setup
+### Automatic Setup (`setup.sh`)
 
-Run the setup script:
+Run the setup script from the `backend` directory:
 
 ```bash
 ./setup.sh
 ```
 
-The script will automatically:
-- Check Python version
-- Create a virtual environment `venv`
-- Install all dependencies from `requirements.txt`
+The script will:
+
+- check the Python version from `.python-version`
+- create a virtual environment in `venv`
+- install dependencies from `requirements.txt`
 
 ### Manual Setup
 
 1. Create a virtual environment:
+
 ```bash
 python3 -m venv venv
 ```
 
 2. Activate the virtual environment:
+
 ```bash
 source venv/bin/activate
 ```
 
 3. Install dependencies:
+
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Running
+## VS Code Tasks
+
+If you use VS Code, you can run the backend scripts without typing the commands manually:
+
+- `Terminal` -> `Run Task` -> `Backend: Setup`
+- `Terminal` -> `Run Task` -> `Backend: Check`
+- `Terminal` -> `Run Task` -> `Backend: Run API`
+- `Terminal` -> `Run Task` -> `Frontend: Run UI`
+- `Terminal` -> `Run Task` -> `App: Start`
+
+`App: Start` launches both the backend API and the frontend dev server in parallel.
+
+The run tasks prompt for ports before starting `uvicorn` and Vite.
+
+### Quick Start in VS Code
+
+1. Open the project root folder in VS Code.
+2. Open `Terminal` -> `Run Task`.
+3. Run `Backend: Setup` once to create `backend/venv` and install Python dependencies.
+4. Open a terminal in `web/` and run `npm install` once to install frontend dependencies.
+5. Open `Terminal` -> `Run Task` again.
+6. Run `App: Start`.
+7. Enter the backend port when prompted (default: `8000`).
+8. Enter the frontend port when prompted (default: `5173`).
+9. Open `http://localhost:5173` in the browser.
+
+If `App: Start` fails, run `Backend: Run API` or `Frontend: Run UI` separately to see which side is missing dependencies.
+
+## Running the API
 
 1. Make sure the virtual environment is activated:
+
 ```bash
 source venv/bin/activate
 ```
 
-2. Create a `.env` file with your HuggingFace token:
+2. Create a `.env` file with your Hugging Face token:
+
 ```bash
 echo "HF_TOKEN=your_token_here" > .env
 ```
 
 3. Start the server:
+
 ```bash
 uvicorn main:app --reload
 ```
 
-The server will be available at: http://localhost:8000
+The default server URL is `http://localhost:8000`.
+
+To use a different port:
+
+```bash
+uvicorn main:app --reload --port 8001
+```
 
 ## API Endpoints
 
 - `GET /` - Health check endpoint
 - `GET /api/dog-advice?breed=<breed_name>` - Get breed-specific advice
-- `POST /api/dog-from-photo` - Upload photo to recognize dog breed and get advice
+- `POST /api/dog-from-photo` - Upload a photo to recognize the dog breed and get advice
 
-### Example Requests
+## Example Requests
 
-**Get breed advice:**
+Get breed advice:
+
 ```bash
 curl "http://localhost:8000/api/dog-advice?breed=Golden%20Retriever"
 ```
 
-**Upload photo:**
+Upload a photo:
+
 ```bash
 curl -X POST "http://localhost:8000/api/dog-from-photo" \
   -F "file=@dog_photo.jpg"
@@ -80,152 +137,140 @@ curl -X POST "http://localhost:8000/api/dog-from-photo" \
 
 ## Project Structure
 
-```
+```text
 backend/
-├── Core/              # Core components
-├── Features/          # Feature modules
-│   ├── DogRecognition/  # Dog recognition model
-│   └── LLM/            # LLM engine for advice generation
-├── main.py            # FastAPI entry point
-├── requirements.txt   # Python dependencies
-├── setup.sh           # Project setup script
-├── check.sh           # Code quality check script
-├── pyproject.toml     # Ruff and mypy configuration
-├── Dockerfile          # Docker configuration for deployment
-├── fly.toml           # Fly.io configuration
-└── .dockerignore       # Docker ignore patterns
+|-- Core/              # Core components
+|-- Features/          # Feature modules
+|   |-- DogRecognition/
+|   `-- LLM/
+|-- main.py            # FastAPI entry point
+|-- requirements.txt   # Python dependencies
+|-- setup.sh           # Project setup script
+|-- check.sh           # Code quality check script
+|-- pyproject.toml     # Ruff and mypy configuration
+|-- Dockerfile         # Docker configuration for deployment
+|-- fly.toml           # Fly.io configuration
+`-- .dockerignore      # Docker ignore patterns
 ```
 
 ## Code Quality
 
-### Running Checks Locally
+### Scripted Checks
 
-Run all code quality checks:
+Run all local checks from the `backend` directory:
 
 ```bash
 ./check.sh
 ```
 
-This will run:
-- **ruff** - Linting and code formatting checks
-- **mypy** - Type checking (non-blocking)
-- **Syntax validation** - Compile check for all Python files
+This runs:
+
+- `ruff check`
+- `ruff format --check`
+- `mypy` (non-blocking)
+- Python syntax validation
+
+The same flow is available in VS Code via the `Backend: Check` task.
 
 ### Manual Checks
 
 Format code:
+
 ```bash
 ruff format .
 ```
 
 Fix linting issues:
+
 ```bash
 ruff check . --fix
 ```
 
 Type checking:
+
 ```bash
 mypy . --ignore-missing-imports
 ```
 
-## CI/CD
+## CI
 
-### Continuous Integration
+GitHub Actions automatically runs checks on push and pull request events:
 
-GitHub Actions automatically runs checks on push and pull requests:
-- **Linting** (ruff) - Code style and quality checks
-- **Code formatting** (ruff format) - Formatting validation
-- **Type checking** (mypy) - Static type analysis
-- **Syntax validation** - Python compilation checks
-- **Import checks** - Import sorting and validation
+- `ruff` linting
+- `ruff format --check`
+- `mypy`
+- backend tests with coverage
 
 See `.github/workflows/backend-ci.yml` for details.
 
-### Continuous Deployment
+## Deployment to Fly.io
 
-Automatic deployment to Fly.io is triggered on:
-- Push of tags matching `backend/v*` or `v*` (e.g., `backend/v1.0.0` or `v1.0.0`)
+The backend can be deployed to Fly.io, and the repository already includes `fly.toml`.
 
-See [Deployment to Fly.io](#deployment-to-flyio) section for details.
+### Initial Setup
 
-### Deployment to Fly.io
+1. Install the Fly.io CLI:
 
-The backend is automatically deployed to Fly.io when tags are pushed:
-- Tags matching `backend/v*` (e.g., `backend/v1.0.0`)
-- Tags matching `v*` (e.g., `v1.0.0`)
-
-**Initial Setup:**
-
-1. Install Fly.io CLI:
 ```bash
 curl -L https://fly.io/install.sh | sh
 ```
 
-2. Login to Fly.io:
+2. Log in:
+
 ```bash
 flyctl auth login
 ```
 
-3. Create a new app (if not already created):
+3. Create the app if needed:
+
 ```bash
 cd backend
 flyctl launch
 ```
 
-4. Set up secrets:
+4. Set the backend secret:
+
 ```bash
 flyctl secrets set HF_TOKEN=your_huggingface_token_here
 ```
 
-5. Add Fly.io API token to GitHub Secrets:
-   - Go to GitHub repository → Settings → Secrets and variables → Actions
-   - Add `FLY_API_TOKEN` with your Fly.io API token
-   - Get token: `flyctl auth token`
+5. Add `FLY_API_TOKEN` to GitHub Actions secrets.
 
-**Releasing a New Version:**
+### Release Flow
 
-1. **Create and push a tag** (recommended approach):
+Create and push a tag after the backend changes are merged:
+
 ```bash
-# From main branch after your changes are merged
 git tag backend/v1.0.0
 git push origin backend/v1.0.0
-# Or use semantic versioning tag
-git tag v1.0.0
-git push origin v1.0.0
-# Deployment will start automatically
 ```
 
-2. **Create a GitHub Release** (optional but recommended):
-   - Go to GitHub repository → Releases → Create a new release
-   - Choose the tag you just created
-   - Add release notes describing changes
-   - This creates a permanent record of the release
+Semantic version tags such as `v1.0.0` are also supported.
 
-**Tag Naming:**
-- Use semantic versioning: `v1.0.0`, `v1.1.0`, `v2.0.0`
-- Prefixed tags: `backend/v1.0.0` (for backend-specific releases)
-- Both formats are supported
+### Billing Note
 
-**Manual Deployment:**
+Billing details change over time, so verify them before production use.
 
-- Via GitHub Actions: Use "Deploy Backend to Fly.io" workflow
-- Via CLI:
-  ```bash
-  cd backend
-  flyctl deploy
-  ```
+As of March 1, 2026:
 
-**Configuration:**
+- New Fly.io organizations use pay-as-you-go billing.
+- The old fixed plans are only retained for older legacy customers.
+- Fly.io has a limited free trial, not a permanent free tier for new accounts.
+- The current free trial is 2 total VM hours or 7 days, whichever comes first.
+- After the trial ends, a payment method is required to keep apps running.
 
-- Region: Amsterdam (`ams`) - European region on free tier
-- See `fly.toml` for deployment configuration
-- See `.github/workflows/backend-deploy.yml` for CI/CD workflow
+Official references:
+
+- https://fly.io/pricing/
+- https://fly.io/docs/about/pricing/
+- https://fly.io/docs/about/free-trial/
 
 ## Python Version
 
-Python version is fixed in `.python-version` file.
+Python is pinned in `.python-version`.
 
-If you have `pyenv` installed, it will automatically use this version:
+If you already use `pyenv`, you can align to that version with:
+
 ```bash
 pyenv install $(cat .python-version)
 pyenv local $(cat .python-version)
