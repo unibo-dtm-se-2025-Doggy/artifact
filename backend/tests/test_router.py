@@ -1,4 +1,3 @@
-import importlib
 import os
 import sys
 
@@ -20,26 +19,15 @@ def test_router_predict(monkeypatch):
         def generate_advice(self, breed: str):
             return f"Advice for {breed}"
 
-    # Убираем кеши, где могли быть реальные импорты
-    for mod in list(sys.modules):
-        if mod.startswith("backend.Features."):
-            sys.modules.pop(mod)
+    import backend.Features.DogRecognition.dog_recognition as dog_recognition_module
+    import backend.Features.LLM.llm_engine as llm_engine_module
 
-    # Патчим оба пути импортов
-    monkeypatch.setattr(
-        "backend.Features.DogRecognition.dog_recognition.DogRecognitionModel",
-        FakeDogModel,
-        raising=False,
-    )
-    monkeypatch.setattr(
-        "backend.Features.LLM.llm_engine.DogLLMEngine",
-        FakeLLM,
-        raising=False,
-    )
+    monkeypatch.setattr(dog_recognition_module, "DogRecognitionModel", FakeDogModel)
+    monkeypatch.setattr(llm_engine_module, "DogLLMEngine", FakeLLM)
 
+    # Force a fresh import so the router binds the patched classes.
+    sys.modules.pop("backend.Core.router", None)
     import backend.Core.router as router
-
-    importlib.reload(router)
 
     router.ml_model = FakeDogModel()
     router.llm_engine = FakeLLM()
