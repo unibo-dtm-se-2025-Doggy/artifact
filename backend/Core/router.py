@@ -1,7 +1,7 @@
 from fastapi import APIRouter, File, UploadFile
 
-from Features.DogRecognition.dog_recognition import DogRecognitionModel
-from Features.LLM.llm_engine import DogLLMEngine
+from backend.Features.DogRecognition.dog_recognition import DogRecognitionModel
+from backend.Features.LLM.llm_engine import DogLLMEngine
 
 router = APIRouter()
 

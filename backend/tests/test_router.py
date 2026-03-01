@@ -22,23 +22,13 @@ def test_router_predict(monkeypatch):
 
     # Убираем кеши, где могли быть реальные импорты
     for mod in list(sys.modules):
-        if mod.startswith("Features.") or mod.startswith("backend.Features."):
+        if mod.startswith("backend.Features."):
             sys.modules.pop(mod)
 
     # Патчим оба пути импортов
     monkeypatch.setattr(
-        "Features.DogRecognition.dog_recognition.DogRecognitionModel",
-        FakeDogModel,
-        raising=False,
-    )
-    monkeypatch.setattr(
         "backend.Features.DogRecognition.dog_recognition.DogRecognitionModel",
         FakeDogModel,
-        raising=False,
-    )
-    monkeypatch.setattr(
-        "Features.LLM.llm_engine.DogLLMEngine",
-        FakeLLM,
         raising=False,
     )
     monkeypatch.setattr(
@@ -48,6 +38,7 @@ def test_router_predict(monkeypatch):
     )
 
     import backend.Core.router as router
+
     importlib.reload(router)
 
     router.ml_model = FakeDogModel()
