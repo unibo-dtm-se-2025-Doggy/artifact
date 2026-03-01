@@ -2,106 +2,71 @@ name: Backend CI
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [main, dev]
     paths:
-      - 'backend/**'
-      - '.github/workflows/backend-ci.yml'
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
     paths:
-      - 'backend/**'
-      - '.github/workflows/backend-ci.yml'
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
 
 jobs:
   lint-and-type-check:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version-file: 'backend/.python-version'
-        cache: 'pip'
-        cache-dependency-path: 'backend/requirements-dev.txt'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/.python-version"
+          cache: pip
 
-    - name: Cache pip packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements-dev.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install ruff mypy types-requests
 
-    - name: Install dev dependencies
-      working-directory: ./backend
-      run: |
-        python -m pip install --upgrade pip
-        pip install --cache-dir ~/.cache/pip -r requirements-dev.txt
+      - name: Run ruff (linting)
+        run: ruff check backend
 
-    - name: Run ruff (linting)
-      working-directory: ./backend
-      run: |
-        ruff check .
+      - name: Run ruff (formatting check)
+        run: ruff format --check backend
 
-    - name: Run ruff (formatting check)
-      working-directory: ./backend
-      run: |
-        ruff format --check .
+      - name: Run mypy (type checking)
+        run: mypy backend --ignore-missing-imports --explicit-package-bases || true
 
-    - name: Run mypy (type checking)
-      working-directory: ./backend
-      run: |
-        # Mypy uses exclude patterns from pyproject.toml (respects .gitignore patterns)
-        mypy . --ignore-missing-imports --explicit-package-bases || true
-
-    - name: Check import sorting
-      working-directory: ./backend
-      run: |
-        ruff check . --select I --fix || true
+      - name: Check import sorting
+        run: ruff check backend --select I --fix || true
 
   test:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    
+    env:
+      HF_TOKEN: dummy
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version-file: 'backend/.python-version'
-        cache: 'pip'
-        cache-dependency-path: 'backend/requirements.txt'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/.python-version"
+          cache: pip
 
-    - name: Cache pip packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install pytest pytest-cov httpx
 
-    - name: Install dependencies
-      working-directory: ./backend
-      run: |
-        python -m pip install --upgrade pip
-        pip install --cache-dir ~/.cache/pip -r requirements.txt
-
-    - name: Test imports
-      working-directory: ./backend
-      run: |
-        python -c "from main import app; print('✓ Imports successful')"
-
-    - name: Check syntax
-      working-directory: ./backend
-      run: |
-        python -m py_compile main.py
-        python -m py_compile Features/LLM/llm_engine.py
-        python -m py_compile Features/DogRecognition/dog_recognition.py
-        python -m py_compile Core/router.py
-        echo "✓ All files compile successfully"
+      - name: Run pytest
+        env:
+          PYTHONPATH: .
+        run: |
+          python -m pytest --cov=backend --cov-report=term-missing backend/tests
