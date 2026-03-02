@@ -1,9 +1,11 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
 
-load_dotenv()
+ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(ENV_PATH)
 
 
 class DogLLMEngine:
@@ -13,7 +15,7 @@ class DogLLMEngine:
             raise ValueError("HF_TOKEN is not set in backend/.env")
 
         # 100% рабочая модель
-        self.model_name = "mistralai/Mistral-7B-Instruct-v0.2"
+        self.model_name = "deepseek-ai/DeepSeek-V3.2:fireworks-ai"
 
         self.client = InferenceClient(token=hf_token)
 

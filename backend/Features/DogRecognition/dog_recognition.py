@@ -23,7 +23,7 @@ class DogRecognitionModel:
         """Return True if the CLIP zero-shot classifier thinks the image is a dog."""
         img = Image.open(image_path)
         results: list[dict[str, Any]] = self.zero_shot_model(
-            images=img,
+            image=img,
             candidate_labels=self.zero_shot_labels,
         )
         top_label = results[0]["label"]
