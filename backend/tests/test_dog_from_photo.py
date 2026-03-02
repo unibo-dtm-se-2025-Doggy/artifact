@@ -44,6 +44,34 @@ def test_dog_returns_breed_and_advice(monkeypatch):
     assert data["raw_predictions"][0]["label"] == "husky"
 
 
+def test_dog_aliases_are_normalized(monkeypatch):
+    client = TestClient(main.app)
+
+    dog_model = type(
+        "DogModel",
+        (),
+        {
+            "is_dog": lambda _, __: True,
+            "predict": lambda _, __: [
+                {
+                    "label": "German shepherd, German shepherd dog, German police dog, alsatian",
+                    "score": 0.9,
+                }
+            ],
+        },
+    )
+    llm = type("LLM", (), {"generate_advice": lambda _, breed: f"Advice for {breed}"})
+
+    monkeypatch.setattr(main, "dog_model", dog_model())
+    monkeypatch.setattr(main, "llm", llm())
+
+    resp = client.post("/api/dog-from-photo", files={"file": dummy_file()})
+    data = resp.json()
+    assert resp.status_code == 200
+    assert data["breed"] == "German shepherd"
+    assert data["advice"] == "Advice for German shepherd"
+
+
 def test_predict_exception_is_returned(monkeypatch):
     client = TestClient(main.app)
 
