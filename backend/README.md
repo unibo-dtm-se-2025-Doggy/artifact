@@ -107,6 +107,16 @@ source venv/bin/activate
 echo "HF_TOKEN=your_token_here" > .env
 ```
 
+Optional: if you want to change the LLM used for advice generation, review supported hosted models here:
+
+- https://huggingface.co/inference/models
+
+Then set a model identifier in `.env`, for example:
+
+```bash
+echo "HF_LLM_MODEL=meta-llama/Llama-3.1-8B-Instruct" >> .env
+```
+
 3. Start the server:
 
 ```bash

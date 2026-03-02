@@ -14,29 +14,35 @@ class DogLLMEngine:
         if not hf_token:
             raise ValueError("HF_TOKEN is not set in backend/.env")
 
-        # 100% рабочая модель
-        self.model_name = "deepseek-ai/DeepSeek-V3.2:fireworks-ai"
+        # Check https://huggingface.co/inference/models for supported alternatives
+        self.model_name = "meta-llama/Llama-3.1-8B-Instruct:scaleway"
 
         self.client = InferenceClient(token=hf_token)
 
     def generate_advice(self, breed: str) -> str:
         prompt = f"""
 You are DogExpertGPT, a veterinarian and dog behavior specialist.
-Provide a short bullet list about this breed: {breed}.
+Write exactly 6 short lines about this breed: {breed}.
+Do not use markdown, bold text, headings, or extra intro text.
+Each line must start with an emoji and the category name.
+Keep each line concise and practical.
 
-List:
-- Temperament
-- Common health risks
-- Feeding recommendations
-- Activity needs
-- Grooming needs
-- Training tips
+Use exactly this format:
+🐶 Temperament: ...
+❤️ Common health risks: ...
+🍖 Feeding recommendations: ...
+🏃 Activity needs: ...
+🛁 Grooming needs: ...
+🎓 Training tips: ...
 """
 
         response = self.client.chat_completion(
             model=self.model_name,
             messages=[
-                {"role": "system", "content": "You are a concise dog expert."},
+                {
+                    "role": "system",
+                    "content": "You are a concise dog expert. Follow the output format exactly.",
+                },
                 {"role": "user", "content": prompt},
             ],
             max_tokens=200,
