@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { ImageUpload } from "@/components/ImageUpload";
-import { Card } from "@/components/ui/card";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
+
+import { ImageUpload } from "@/components/ImageUpload";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 
 const API_URL = "http://127.0.0.1:8000/api/dog-from-photo";
 
 interface BreedResult {
   breed: string;
   advice: string;
-  raw_predictions?: { label: string; score: number }[];
 }
 
 export const DogAnalyzer = () => {
@@ -17,7 +17,7 @@ export const DogAnalyzer = () => {
   const [result, setResult] = useState<BreedResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleImageSelected = async (file: File, preview: string) => {
+  const handleImageSelected = async (file: File, _preview: string) => {
     setError(null);
     setResult(null);
     setIsAnalyzing(true);
@@ -41,7 +41,6 @@ export const DogAnalyzer = () => {
       setResult({
         breed: data.breed,
         advice: data.advice,
-        raw_predictions: data.raw_predictions,
       });
     } catch (e: any) {
       setError(e?.message || "Failed to analyze the image");
@@ -52,21 +51,14 @@ export const DogAnalyzer = () => {
 
   return (
     <div className="space-y-8">
-      {/* ЗАГРУЗКА КАРТИНКИ */}
-      <ImageUpload
-        onImageSelected={handleImageSelected}
-        isAnalyzing={isAnalyzing}
-      />
+      <ImageUpload onImageSelected={handleImageSelected} isAnalyzing={isAnalyzing} />
 
-      {/* ПОСТОЯННОЕ ОКНО ВЫВОДА */}
-      <Card className="p-6 space-y-4">
-        <h2 className="text-2xl font-bold">
-          Dog Analysis
-        </h2>
+      <Card className="space-y-4 p-6">
+        <h2 className="text-2xl font-bold">Dog Analysis</h2>
 
         {isAnalyzing && (
           <div className="flex items-center gap-3 text-muted-foreground">
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Loader2 className="h-5 w-5 animate-spin" />
             <span>Analyzing your dog photo...</span>
           </div>
         )}
@@ -80,32 +72,17 @@ export const DogAnalyzer = () => {
 
         {result?.breed && (
           <div>
-            <h3 className="font-semibold text-lg">
+            <h3 className="text-lg font-semibold">
               Detected breed:
-              <span className="text-primary ml-2">{result.breed}</span>
+              <span className="ml-2 text-primary">{result.breed}</span>
             </h3>
-          </div>
-        )}
-
-        {result?.raw_predictions && (
-          <div className="text-sm text-muted-foreground">
-            <h4 className="font-semibold mb-1">Top predictions:</h4>
-            <ul className="list-disc list-inside">
-              {result.raw_predictions.map((p, idx) => (
-                <li key={idx}>
-                  {p.label} — {(p.score * 100).toFixed(1)}%
-                </li>
-              ))}
-            </ul>
           </div>
         )}
 
         {result?.advice && (
           <div>
-            <h4 className="font-semibold mb-2">AI recommendations:</h4>
-            <p className="whitespace-pre-line text-muted-foreground">
-              {result.advice}
-            </p>
+            <h4 className="mb-2 font-semibold">AI recommendations:</h4>
+            <p className="whitespace-pre-line text-muted-foreground">{result.advice}</p>
           </div>
         )}
       </Card>
