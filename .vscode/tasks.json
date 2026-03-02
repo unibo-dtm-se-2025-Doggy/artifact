@@ -66,32 +66,42 @@
       }
     },
     {
-      "label": "Backend: Run API",
+      "label": "Frontend: Setup",
       "type": "shell",
-      "command": "powershell",
+      "command": "npm",
       "args": [
-        "-NoProfile",
-        "-Command",
-        ".\\venv\\Scripts\\python.exe -m uvicorn main:app --reload --port ${input:backendPort}"
+        "install"
       ],
       "options": {
-        "cwd": "${workspaceFolder}/backend"
+        "cwd": "${workspaceFolder}/web"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend: Run API",
+      "type": "shell",
+      "command": ".\\backend\\venv\\Scripts\\python.exe",
+      "args": [
+        "-m",
+        "uvicorn",
+        "backend.main:app",
+        "--reload",
+        "--port",
+        "${input:backendPort}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONPATH": "."
+        }
       },
       "problemMatcher": [],
       "isBackground": true,
       "linux": {
-        "command": "bash",
-        "args": [
-          "-lc",
-          "source venv/bin/activate && python -m uvicorn main:app --reload --port ${input:backendPort}"
-        ]
+        "command": "./backend/venv/bin/python"
       },
       "osx": {
-        "command": "bash",
-        "args": [
-          "-lc",
-          "source venv/bin/activate && python -m uvicorn main:app --reload --port ${input:backendPort}"
-        ]
+        "command": "./backend/venv/bin/python"
       }
     },
     {
@@ -114,12 +124,30 @@
       "isBackground": true
     },
     {
-      "label": "App: Start",
+      "label": "App: Run",
       "dependsOn": [
         "Backend: Run API",
         "Frontend: Run UI"
       ],
       "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "App: Bootstrap",
+      "dependsOn": [
+        "Backend: Setup",
+        "Frontend: Setup",
+        "App: Run"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "App: Start",
+      "dependsOn": [
+        "App: Run"
+      ],
+      "dependsOrder": "sequence",
       "problemMatcher": []
     }
   ],

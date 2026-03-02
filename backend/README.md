@@ -64,11 +64,15 @@ If you use VS Code, you can run the backend scripts without typing the commands 
 
 - `Terminal` -> `Run Task` -> `Backend: Setup`
 - `Terminal` -> `Run Task` -> `Backend: Check`
+- `Terminal` -> `Run Task` -> `Frontend: Setup`
 - `Terminal` -> `Run Task` -> `Backend: Run API`
 - `Terminal` -> `Run Task` -> `Frontend: Run UI`
+- `Terminal` -> `Run Task` -> `App: Bootstrap`
 - `Terminal` -> `Run Task` -> `App: Start`
 
-`App: Start` launches both the backend API and the frontend dev server in parallel.
+`App: Bootstrap` runs `Backend: Setup`, then `Frontend: Setup`, then launches both the backend API and the frontend dev server.
+
+`App: Start` only launches the backend API and the frontend dev server using the already installed dependencies.
 
 The run tasks prompt for ports before starting `uvicorn` and Vite.
 
@@ -76,15 +80,18 @@ The run tasks prompt for ports before starting `uvicorn` and Vite.
 
 1. Open the project root folder in VS Code.
 2. Open `Terminal` -> `Run Task`.
-3. Run `Backend: Setup` once to create `backend/venv` and install Python dependencies.
-4. Open a terminal in `web/` and run `npm install` once to install frontend dependencies.
-5. Open `Terminal` -> `Run Task` again.
-6. Run `App: Start`.
-7. Enter the backend port when prompted (default: `8000`).
-8. Enter the frontend port when prompted (default: `5173`).
-9. Open `http://localhost:5173` in the browser.
+3. Open `Terminal` -> `Run Task` again.
+4. Run `App: Bootstrap` the first time.
+5. Enter the backend port when prompted (default: `8000`).
+6. Enter the frontend port when prompted (default: `5173`).
+7. Open `http://localhost:5173` in the browser.
+
+After the first successful setup, use `App: Start` for normal day-to-day launches.
 
 If `App: Start` fails, run `Backend: Run API` or `Frontend: Run UI` separately to see which side is missing dependencies.
+
+If the backend task says `backend/venv is missing`, `Backend: Setup` did not complete successfully.
+The backend task starts the API from the repository root so `backend.main:app` can resolve package imports correctly.
 
 ## Running the API
 
@@ -112,6 +119,12 @@ To use a different port:
 
 ```bash
 uvicorn main:app --reload --port 8001
+```
+
+From the repository root, the equivalent command is:
+
+```bash
+PYTHONPATH=. backend/venv/bin/python -m uvicorn backend.main:app --reload --port 8000
 ```
 
 ## API Endpoints
