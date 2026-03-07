@@ -1,0 +1,168 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Backend: Setup",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "-m",
+        "venv",
+        "venv"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "problemMatcher": [],
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-Command",
+          "if (-not (Test-Path venv)) { python -m venv venv }; .\\venv\\Scripts\\python.exe -m pip install --upgrade pip; .\\venv\\Scripts\\python.exe -m pip install -r requirements.txt"
+        ]
+      },
+      "linux": {
+        "command": "bash",
+        "args": [
+          "-lc",
+          "if [ ! -d venv ]; then python3 -m venv venv; fi && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
+        ]
+      },
+      "osx": {
+        "command": "bash",
+        "args": [
+          "-lc",
+          "if [ ! -d venv ]; then python3 -m venv venv; fi && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
+        ]
+      }
+    },
+    {
+      "label": "Backend: Check",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$env:PYTHONPATH='.'; python -m ruff check backend; python -m ruff format --check backend; python -m pytest --cov=backend --cov-report=term-missing backend/tests"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "linux": {
+        "command": "bash",
+        "args": [
+          "-lc",
+          "PYTHONPATH=. python -m ruff check backend && python -m ruff format --check backend && PYTHONPATH=. python -m pytest --cov=backend --cov-report=term-missing backend/tests"
+        ]
+      },
+      "osx": {
+        "command": "bash",
+        "args": [
+          "-lc",
+          "PYTHONPATH=. python -m ruff check backend && python -m ruff format --check backend && PYTHONPATH=. python -m pytest --cov=backend --cov-report=term-missing backend/tests"
+        ]
+      }
+    },
+    {
+      "label": "Frontend: Setup",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "install"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/web"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend: Run API",
+      "type": "shell",
+      "command": ".\\backend\\venv\\Scripts\\python.exe",
+      "args": [
+        "-m",
+        "uvicorn",
+        "backend.main:app",
+        "--reload",
+        "--port",
+        "${input:backendPort}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONPATH": "."
+        }
+      },
+      "problemMatcher": [],
+      "isBackground": true,
+      "linux": {
+        "command": "./backend/venv/bin/python"
+      },
+      "osx": {
+        "command": "./backend/venv/bin/python"
+      }
+    },
+    {
+      "label": "Frontend: Run UI",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "${input:frontendPort}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/web"
+      },
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "App: Run",
+      "dependsOn": [
+        "Backend: Run API",
+        "Frontend: Run UI"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "App: Bootstrap",
+      "dependsOn": [
+        "Backend: Setup",
+        "Frontend: Setup",
+        "App: Run"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "App: Start",
+      "dependsOn": [
+        "App: Run"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "backendPort",
+      "type": "promptString",
+      "description": "Port for the FastAPI backend",
+      "default": "8000"
+    },
+    {
+      "id": "frontendPort",
+      "type": "promptString",
+      "description": "Port for the Vite frontend",
+      "default": "5173"
+    }
+  ]
+}

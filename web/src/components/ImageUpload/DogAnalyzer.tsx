@@ -1,10 +1,26 @@
 import { useState } from "react";
 import { ImageUpload } from "@/components/ImageUpload";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
-const API_URL = "http://127.0.0.1:8000/api/dog-from-photo";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/dog-from-photo`;
+
+const getErrorMessage = (data: any): string | null => {
+  if (data?.error) {
+    return data.error;
+  }
+
+  const detail = data?.detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const first = detail[0];
+    if (first?.msg) {
+      return String(first.msg);
+    }
+  }
+
+  return null;
+};
 
 interface BreedResult {
   breed: string;
@@ -17,7 +33,7 @@ export const DogAnalyzer = () => {
   const [result, setResult] = useState<BreedResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleImageSelected = async (file: File, preview: string) => {
+  const handleImageSelected = async (file: File, _preview: string) => {
     setError(null);
     setResult(null);
     setIsAnalyzing(true);
@@ -37,6 +53,10 @@ export const DogAnalyzer = () => {
       }
 
       const data = await response.json();
+      const apiError = getErrorMessage(data);
+      if (apiError) {
+        throw new Error(apiError);
+      }
 
       setResult({
         breed: data.breed,
@@ -52,17 +72,10 @@ export const DogAnalyzer = () => {
 
   return (
     <div className="space-y-8">
-      {/* ЗАГРУЗКА КАРТИНКИ */}
-      <ImageUpload
-        onImageSelected={handleImageSelected}
-        isAnalyzing={isAnalyzing}
-      />
+      <ImageUpload onImageSelected={handleImageSelected} isAnalyzing={isAnalyzing} />
 
-      {/* ПОСТОЯННОЕ ОКНО ВЫВОДА */}
       <Card className="p-6 space-y-4">
-        <h2 className="text-2xl font-bold">
-          Dog Analysis
-        </h2>
+        <h2 className="text-2xl font-bold">Dog Analysis</h2>
 
         {isAnalyzing && (
           <div className="flex items-center gap-3 text-muted-foreground">
@@ -93,7 +106,7 @@ export const DogAnalyzer = () => {
             <ul className="list-disc list-inside">
               {result.raw_predictions.map((p, idx) => (
                 <li key={idx}>
-                  {p.label} — {(p.score * 100).toFixed(1)}%
+                  {p.label} - {(p.score * 100).toFixed(1)}%
                 </li>
               ))}
             </ul>
@@ -103,9 +116,7 @@ export const DogAnalyzer = () => {
         {result?.advice && (
           <div>
             <h4 className="font-semibold mb-2">AI recommendations:</h4>
-            <p className="whitespace-pre-line text-muted-foreground">
-              {result.advice}
-            </p>
+            <p className="whitespace-pre-line text-muted-foreground">{result.advice}</p>
           </div>
         )}
       </Card>

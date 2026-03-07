@@ -1,0 +1,4 @@
+# Development and CI dependencies (lightweight)
+ruff>=0.1.0
+mypy>=1.0.0
+types-requests>=2.31.0

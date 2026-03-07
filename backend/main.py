@@ -4,8 +4,8 @@ import uuid
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from Features.DogRecognition.dog_recognition import DogRecognitionModel
-from Features.LLM.llm_engine import DogLLMEngine
+from backend.Features.DogRecognition.dog_recognition import DogRecognitionModel
+from backend.Features.LLM.llm_engine import DogLLMEngine
 
 app = FastAPI()
 
@@ -22,6 +22,11 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"status": "ok", "message": "backend is running"}
+
+
+def _normalize_breed_label(label: str) -> str:
+    """Keep only the primary breed name when the classifier returns aliases."""
+    return label.split(",")[0].strip()
 
 
 # ---------- Init LLM ----------
@@ -74,7 +79,7 @@ async def dog_from_photo(file: UploadFile = File(...)):
 
         # --- 3. Predict breed ---
         preds = dog_model.predict(temp_path)
-        top_label = preds[0]["label"]
+        top_label = _normalize_breed_label(preds[0]["label"])
 
         # --- 4. Generate LLM advice ---
         advice = llm.generate_advice(top_label)

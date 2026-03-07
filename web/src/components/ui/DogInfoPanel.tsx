@@ -6,7 +6,6 @@ interface Props {
   result: {
     breed: string;
     advice: string;
-    raw_predictions?: { label: string; score: number }[];
   } | null;
   isAnalyzing: boolean;
   error: string | null;
@@ -55,21 +54,6 @@ export const DogInfoPanel = ({ result, isAnalyzing, error }: Props) => {
               {result.advice}
             </p>
           </div>
-
-          {result.raw_predictions && (
-            <div>
-              <h3 className="font-semibold mb-1 text-sm">
-                Model confidence (top predictions)
-              </h3>
-              <ul className="text-sm text-muted-foreground list-disc pl-4">
-                {result.raw_predictions.map((p, idx) => (
-                  <li key={idx}>
-                    {p.label}: {(p.score * 100).toFixed(1)}%
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       )}
     </Card>
