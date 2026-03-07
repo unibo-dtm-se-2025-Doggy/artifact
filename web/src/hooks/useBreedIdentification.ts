@@ -49,7 +49,6 @@ export const useBreedIdentification = () => {
       setResult({
         breed: data.breed,
         advice: data.advice,
-        raw_predictions: data.raw_predictions,
       });
 
     } catch (e: any) {

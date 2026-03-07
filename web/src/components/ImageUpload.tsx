@@ -11,7 +11,6 @@ interface ImageUploadProps {
 export const ImageUpload = ({ onImageSelected, isAnalyzing }: ImageUploadProps) => {
   const [preview, setPreview] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -29,7 +28,6 @@ export const ImageUpload = ({ onImageSelected, isAnalyzing }: ImageUploadProps) 
   const clearImage = () => {
     setPreview("");
     if (fileInputRef.current) fileInputRef.current.value = "";
-    if (cameraInputRef.current) cameraInputRef.current.value = "";
   };
 
   return (
@@ -37,7 +35,6 @@ export const ImageUpload = ({ onImageSelected, isAnalyzing }: ImageUploadProps) 
       {!preview ? (
         <UploadArea
           fileInputRef={fileInputRef}
-          cameraInputRef={cameraInputRef}
           isAnalyzing={isAnalyzing}
           onFileSelect={handleFileSelect}
         />

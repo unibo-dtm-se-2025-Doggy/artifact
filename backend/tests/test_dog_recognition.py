@@ -15,7 +15,7 @@ def make_temp_image():
 
 def test_is_dog_and_predict(monkeypatch):
     class ZeroShotStub:
-        def __call__(self, images=None, candidate_labels=None):
+        def __call__(self, image=None, candidate_labels=None):
             return [{"label": "dog"}]
 
     class ClassifierStub:
@@ -50,7 +50,7 @@ def test_is_dog_and_predict(monkeypatch):
 
 def test_zero_shot_not_dog(monkeypatch):
     class ZeroShotStub:
-        def __call__(self, images=None, candidate_labels=None):
+        def __call__(self, image=None, candidate_labels=None):
             return [{"label": "not dog"}]
 
     class ClassifierStub:

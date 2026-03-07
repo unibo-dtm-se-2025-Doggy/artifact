@@ -12,5 +12,8 @@
 # Logs
 *.log
 
+# Coverage artifacts
+.coverage
+
 # OS
 Thumbs.db
