@@ -4,8 +4,8 @@ import uuid
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from Features.DogRecognition.dog_recognition import DogRecognitionModel
-from Features.LLM.llm_engine import DogLLMEngine
+from backend.Features.DogRecognition.dog_recognition import DogRecognitionModel
+from backend.Features.LLM.llm_engine import DogLLMEngine
 
 app = FastAPI()
 

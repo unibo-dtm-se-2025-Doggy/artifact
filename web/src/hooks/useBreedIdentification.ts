@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-const API_URL = "http://127.0.0.1:8000/api/dog-from-photo";
+
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/dog-from-photo`;
 const getErrorMessage = (data: any): string | null => {
   if (data?.error) {
     return data.error;
