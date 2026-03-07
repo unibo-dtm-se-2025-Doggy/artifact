@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: Doggy API
+  version: 0.1.0
+  description: Contract for dog breed identification and breed-specific advice.
+servers:
+  - url: http://localhost:8000
+    description: Local backend
+tags:
+  - name: System
+    description: Service health endpoint
+  - name: Dog Analysis
+    description: Dog advice and image analysis endpoints
+paths:
+  /:
+    get:
+      tags:
+        - System
+      operationId: getHealthStatus
+      summary: Health check
+      responses:
+        "200":
+          description: Backend is running
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /api/dog-advice:
+    get:
+      tags:
+        - Dog Analysis
+      operationId: getDogAdvice
+      summary: Get breed-specific advice
+      parameters:
+        - name: breed
+          in: query
+          required: true
+          description: Dog breed name used to generate advice
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        "200":
+          description: Advice generated successfully or domain error returned by backend
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/AdviceResponse"
+                  - $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                success:
+                  summary: Advice payload
+                  value:
+                    advice: "Give your Labrador daily exercise and consistent training."
+                error:
+                  summary: Service error wrapped into 200
+                  value:
+                    error: LLM not initialized
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /api/dog-from-photo:
+    post:
+      tags:
+        - Dog Analysis
+      operationId: identifyDogFromPhoto
+      summary: Identify dog breed from photo and return advice
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadDogPhotoRequest"
+      responses:
+        "200":
+          description: Prediction payload or domain error returned by backend
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DogFromPhotoSuccess"
+                  - $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                success:
+                  summary: Successful classification and advice
+                  value:
+                    breed: Labrador Retriever
+                    raw_predictions:
+                      - label: Labrador Retriever
+                        score: 0.97
+                      - label: Golden Retriever
+                        score: 0.02
+                    advice: "Provide regular exercise, socialization, and joint-friendly activities."
+                error:
+                  summary: Image rejected
+                  value:
+                    error: Sorry, this is not a dog. Please try again
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+components:
+  schemas:
+    UploadDogPhotoRequest:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          format: binary
+          description: Dog image file (.jpg, .jpeg, .png)
+      additionalProperties: false
+    HealthStatus:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: string
+          example: ok
+        message:
+          type: string
+          example: backend is running
+      additionalProperties: false
+    AdviceResponse:
+      type: object
+      required:
+        - advice
+      properties:
+        advice:
+          type: string
+          description: Generated breed-specific recommendation text
+      additionalProperties: false
+    DogFromPhotoSuccess:
+      type: object
+      required:
+        - breed
+        - raw_predictions
+        - advice
+      properties:
+        breed:
+          type: string
+          description: Top predicted dog breed label
+        raw_predictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Prediction"
+          minItems: 1
+        advice:
+          type: string
+          description: Generated breed-specific recommendation text
+      additionalProperties: false
+    Prediction:
+      type: object
+      required:
+        - label
+        - score
+      properties:
+        label:
+          type: string
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+      additionalProperties: false
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+      additionalProperties: false
+    HTTPValidationError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+      additionalProperties: false
