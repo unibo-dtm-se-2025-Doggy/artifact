@@ -1,6 +1,20 @@
 import { useState } from "react";
 
+
 const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/dog-from-photo`;
+const getErrorMessage = (data: any): string | null => {
+  if (data?.error) {
+    return data.error;
+  }
+  const detail = data?.detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const first = detail[0];
+    if (first?.msg) {
+      return String(first.msg);
+    }
+  }
+  return null;
+};
 
 export const useBreedIdentification = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -27,9 +41,9 @@ export const useBreedIdentification = () => {
       }
 
       const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
+      const apiError = getErrorMessage(data);
+      if (apiError) {
+        throw new Error(apiError);
       }
 
       setResult({

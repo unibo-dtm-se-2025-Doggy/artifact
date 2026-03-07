@@ -5,6 +5,19 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
 const API_URL = "http://127.0.0.1:8000/api/dog-from-photo";
+const getErrorMessage = (data: any): string | null => {
+  if (data?.error) {
+    return data.error;
+  }
+  const detail = data?.detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const first = detail[0];
+    if (first?.msg) {
+      return String(first.msg);
+    }
+  }
+  return null;
+};
 
 interface BreedResult {
   breed: string;
@@ -37,6 +50,10 @@ export const DogAnalyzer = () => {
       }
 
       const data = await response.json();
+      const apiError = getErrorMessage(data);
+      if (apiError) {
+        throw new Error(apiError);
+      }
 
       setResult({
         breed: data.breed,
