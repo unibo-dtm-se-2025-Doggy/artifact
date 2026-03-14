@@ -1,17 +1,25 @@
+from __future__ import annotations
+
 import os
 import uuid
+from importlib import import_module
+from typing import TYPE_CHECKING, Any
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-try:
-    # Running as package: python -m uvicorn backend.main:app
+if TYPE_CHECKING:
     from backend.Features.DogRecognition.dog_recognition import DogRecognitionModel
     from backend.Features.LLM.llm_engine import DogLLMEngine
+
+try:
+    # Running as package: python -m uvicorn backend.main:app
+    dog_recognition_module: Any = import_module("backend.Features.DogRecognition.dog_recognition")
+    llm_engine_module: Any = import_module("backend.Features.LLM.llm_engine")
 except ModuleNotFoundError:
     # Running from backend dir: uvicorn main:app
-    from Features.DogRecognition.dog_recognition import DogRecognitionModel
-    from Features.LLM.llm_engine import DogLLMEngine
+    dog_recognition_module = import_module("Features.DogRecognition.dog_recognition")
+    llm_engine_module = import_module("Features.LLM.llm_engine")
 
 app = FastAPI()
 
@@ -49,7 +57,7 @@ def _get_llm() -> DogLLMEngine | None:
         return llm
 
     try:
-        llm = DogLLMEngine()
+        llm = llm_engine_module.DogLLMEngine()
         print("LLM loaded successfully")
     except Exception as e:
         llm_init_error = str(e)
@@ -65,7 +73,7 @@ def _get_dog_model() -> DogRecognitionModel | None:
         return dog_model
 
     try:
-        dog_model = DogRecognitionModel()
+        dog_model = dog_recognition_module.DogRecognitionModel()
         print("DogRecognition loaded successfully")
     except Exception as e:
         dog_model_init_error = str(e)
