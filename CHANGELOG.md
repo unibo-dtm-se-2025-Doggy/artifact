@@ -10,3 +10,5 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Added
 - Added root `LICENSE` file (MIT).
 - Added root `CHANGELOG.md`.
+- Documented backend release rules: `backend/v*` tags trigger Fly.io deployment via `.github/workflows/backend-deploy.yml`.
+- Documented that backend releases in this repository do not publish packages to PyPI.
