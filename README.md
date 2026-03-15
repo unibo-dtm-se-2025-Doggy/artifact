@@ -60,3 +60,4 @@ Backend and web checks run via GitHub Actions workflows in:
 - `.github/workflows/backend-ci.yml`
 - `.github/workflows/web-ci.yml`
 
+Backend release deployment is handled by `.github/workflows/backend-deploy.yml` on `backend/v*` tags to Fly.io (no PyPI publish flow in this repository).
