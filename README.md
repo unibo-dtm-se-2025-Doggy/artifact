@@ -6,33 +6,56 @@ Doggy is a full-stack web application where a user uploads a dog photo and gets:
 
 The project includes a React frontend, a FastAPI backend, tests, CI workflows, and an OpenAPI contract.
 
-## Current Status
+## Project Structure
 
-Implementation already exists.
-
-Repository currently contains:
+Repository modules:
 - `backend/`: FastAPI app, core features, tests, Docker/Fly.io files
 - `web/`: React + TypeScript + Vite frontend
 - `openapi/`: API specification (`openapi.yaml`)
 - `.github/workflows/`: CI/CD workflows for backend and web
 - `docs/`: project documentation files
-
-## Repository Structure
+- `LICENSE`: project license (MIT)
+- `CHANGELOG.md`: release notes and documented changes
 
 ```text
 artifact/
 |- backend/
+|  |- __init__.py
+|  |- main.py
+|  |- Core/
+|  |  `- router.py
+|  |- Features/
+|  |  |- DogRecognition/
+|  |  |  `- dog_recognition.py
+|  |  `- LLM/
+|  |     `- llm_engine.py
+|  |- tests/
+|  `- fly.toml
 |- web/
+|  |- src/
+|  |  |- main.tsx
+|  |  |- App.tsx
+|  |  |- hooks/
+|  |  |  `- useBreedIdentification.ts
+|  |  `- components/ui/
+|  |     `- DogInfoPanel.tsx
+|  `- package.json
 |- openapi/
+|  `- openapi.yaml
 |- docs/
+|- LICENSE
+|- CHANGELOG.md
 `- .github/workflows/
+   |- backend-ci.yml
+   |- web-ci.yml
+   `- backend-deploy.yml
 ```
 
-## Local Run (Quick Start)
+## How to do stuff
 
-### Backend
+### Run locally
 
-From `backend/`:
+Backend (terminal 1), from `backend/`:
 
 ```bash
 ./setup.sh
@@ -40,24 +63,67 @@ source venv/bin/activate
 uvicorn main:app --reload
 ```
 
-### Frontend
-
-From `web/`:
+Frontend (terminal 2), from `web/`:
 
 ```bash
 npm install
 npm run dev
 ```
 
-## API Contract
+### Run on web (Fly.io)
+
+Deployed backend URL:
+- `https://doggy-black-darkness-694.fly.dev/`
+
+If the app was idle, Fly.io may need a short cold start on the first request.
+If you get a timeout, wait a bit and retry.
+
+To run frontend locally against deployed backend:
+
+```bash
+cd web
+VITE_API_BASE_URL=https://doggy-black-darkness-694.fly.dev npm run dev
+```
+
+### Run quality checks
+
+Backend:
+
+```bash
+cd backend
+source venv/bin/activate
+./check.sh
+```
+
+Frontend:
+
+```bash
+cd web
+npm run lint
+npm run test:ci
+npm run build
+```
+
+### Update API contract
 
 OpenAPI spec is in:
 - `openapi/openapi.yaml`
 
-## CI
+### Release backend
+
+Create and push a backend release tag:
+
+```bash
+git tag backend/v1.0.0
+git push origin backend/v1.0.0
+```
+
+This triggers `.github/workflows/backend-deploy.yml` and deploys backend to Fly.io.
+This repository does not publish backend packages to PyPI.
+
+## CI/CD
 
 Backend and web checks run via GitHub Actions workflows in:
 - `.github/workflows/backend-ci.yml`
 - `.github/workflows/web-ci.yml`
-
-Backend release deployment is handled by `.github/workflows/backend-deploy.yml` on `backend/v*` tags to Fly.io (no PyPI publish flow in this repository).
+- `.github/workflows/backend-deploy.yml` (backend deploy on `backend/v*` tags)
