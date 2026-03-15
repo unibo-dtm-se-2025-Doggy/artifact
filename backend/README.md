@@ -229,6 +229,8 @@ See `.github/workflows/backend-ci.yml` for details.
 ## Deployment to Fly.io
 
 The backend can be deployed to Fly.io, and the repository already includes `fly.toml`.
+Backend release automation in this repository is deployment to Fly.io only.
+There is no backend publish step to PyPI in the release workflow.
 
 ### Initial Setup
 
@@ -261,14 +263,14 @@ flyctl secrets set HF_TOKEN=your_huggingface_token_here
 
 ### Release Flow
 
-Create and push a tag after the backend changes are merged:
+After backend changes are merged, create and push a `backend/v*` tag:
 
 ```bash
 git tag backend/v1.0.0
 git push origin backend/v1.0.0
 ```
 
-Semantic version tags such as `v1.0.0` are also supported.
+This tag triggers `.github/workflows/backend-deploy.yml`, which deploys the backend to Fly.io.
 
 ### Billing Note
 
