@@ -14,14 +14,41 @@ Repository modules:
 - `openapi/`: API specification (`openapi.yaml`)
 - `.github/workflows/`: CI/CD workflows for backend and web
 - `docs/`: project documentation files
+- `LICENSE`: project license (MIT)
+- `CHANGELOG.md`: release notes and documented changes
 
 ```text
 artifact/
 |- backend/
+|  |- __init__.py
+|  |- main.py
+|  |- Core/
+|  |  `- router.py
+|  |- Features/
+|  |  |- DogRecognition/
+|  |  |  `- dog_recognition.py
+|  |  `- LLM/
+|  |     `- llm_engine.py
+|  |- tests/
+|  `- fly.toml
 |- web/
+|  |- src/
+|  |  |- main.tsx
+|  |  |- App.tsx
+|  |  |- hooks/
+|  |  |  `- useBreedIdentification.ts
+|  |  `- components/ui/
+|  |     `- DogInfoPanel.tsx
+|  `- package.json
 |- openapi/
+|  `- openapi.yaml
 |- docs/
+|- LICENSE
+|- CHANGELOG.md
 `- .github/workflows/
+   |- backend-ci.yml
+   |- web-ci.yml
+   `- backend-deploy.yml
 ```
 
 ## How to do stuff
