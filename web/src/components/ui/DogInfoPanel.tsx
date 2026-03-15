@@ -16,7 +16,7 @@ export const DogInfoPanel = ({ result, isAnalyzing, error }: Props) => {
     <Card className="p-6 min-h-[260px] space-y-4">
       <h2 className="text-xl font-semibold">Dog Analysis</h2>
 
-      {/* 1. Идёт анализ */}
+      {/* 1. Analysing */}
       {isAnalyzing && (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 className="w-4 h-4 animate-spin" />
