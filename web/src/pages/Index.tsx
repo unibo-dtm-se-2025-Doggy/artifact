@@ -1,13 +1,9 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
-import { ImageUpload } from "@/components/ImageUpload";
+import { DogAnalyzer } from "@/components/ImageUpload/DogAnalyzer";
 import { Footer } from "@/components/Footer";
-import { useBreedIdentification } from "@/hooks/useBreedIdentification";
-import { DogInfoPanel } from "@/components/ui/DogInfoPanel";
 
 const Index = () => {
-  const { isAnalyzing, identifyBreed, result, error } = useBreedIdentification();
-
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -25,16 +21,7 @@ const Index = () => {
             </p>
           </div>
           
-          <ImageUpload 
-            onImageSelected={identifyBreed}
-            isAnalyzing={isAnalyzing}
-          />
-
-          <DogInfoPanel
-            result={result}
-            isAnalyzing={isAnalyzing}
-            error={error}
-          />
+          <DogAnalyzer />
         </div>
       </section>
 

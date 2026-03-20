@@ -19,21 +19,21 @@
         "args": [
           "-NoProfile",
           "-Command",
-          "if (-not (Test-Path venv)) { python -m venv venv }; .\\venv\\Scripts\\python.exe -m pip install --upgrade pip; .\\venv\\Scripts\\python.exe -m pip install -r requirements.txt"
+          "$venvOk = (Test-Path .\\venv\\Scripts\\python.exe) -and (Test-Path .\\venv\\Scripts\\pip.exe); if (-not $venvOk) { if (Test-Path venv) { Remove-Item -Recurse -Force venv }; python -m venv venv }; .\\venv\\Scripts\\python.exe -m ensurepip --upgrade; .\\venv\\Scripts\\python.exe -m pip install --upgrade pip; .\\venv\\Scripts\\python.exe -m pip install -r requirements.txt -r requirements-dev.txt"
         ]
       },
       "linux": {
         "command": "bash",
         "args": [
           "-lc",
-          "if [ ! -d venv ]; then python3 -m venv venv; fi && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
+          "if [ ! -x venv/bin/python ] || [ ! -x venv/bin/pip ]; then rm -rf venv && python3 -m venv venv; fi && venv/bin/python -m ensurepip --upgrade && venv/bin/python -m pip install --upgrade pip && venv/bin/python -m pip install -r requirements.txt -r requirements-dev.txt"
         ]
       },
       "osx": {
         "command": "bash",
         "args": [
           "-lc",
-          "if [ ! -d venv ]; then python3 -m venv venv; fi && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
+          "if [ ! -x venv/bin/python ] || [ ! -x venv/bin/pip ]; then rm -rf venv && python3 -m venv venv; fi && venv/bin/python -m ensurepip --upgrade && venv/bin/python -m pip install --upgrade pip && venv/bin/python -m pip install -r requirements.txt -r requirements-dev.txt"
         ]
       }
     },
@@ -118,7 +118,10 @@
         "${input:frontendPort}"
       ],
       "options": {
-        "cwd": "${workspaceFolder}/web"
+        "cwd": "${workspaceFolder}/web",
+        "env": {
+          "VITE_API_BASE_URL": "http://127.0.0.1:${input:backendPort}"
+        }
       },
       "problemMatcher": [],
       "isBackground": true

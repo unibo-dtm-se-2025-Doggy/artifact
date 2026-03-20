@@ -1,12 +1,32 @@
 import { useState } from "react";
 
+type ApiDetail = {
+  msg?: string;
+};
+
+type ApiErrorResponse = {
+  error?: string;
+  detail?: ApiDetail[];
+};
+
+type BreedIdentificationResult = {
+  breed: string;
+  advice: string;
+};
 
 const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/dog-from-photo`;
-const getErrorMessage = (data: any): string | null => {
-  if (data?.error) {
-    return data.error;
+const getErrorMessage = (data: unknown): string | null => {
+  if (typeof data !== "object" || data === null) {
+    return null;
   }
-  const detail = data?.detail;
+
+  const payload = data as ApiErrorResponse;
+
+  if (payload.error) {
+    return payload.error;
+  }
+
+  const detail = payload.detail;
   if (Array.isArray(detail) && detail.length > 0) {
     const first = detail[0];
     if (first?.msg) {
@@ -18,10 +38,10 @@ const getErrorMessage = (data: any): string | null => {
 
 export const useBreedIdentification = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<BreedIdentificationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const identifyBreed = async (file: File, preview: string) => {
+  const identifyBreed = async (file: File, _preview: string) => {
     setIsAnalyzing(true);
     setResult(null);
     setError(null);
@@ -51,8 +71,8 @@ export const useBreedIdentification = () => {
         advice: data.advice,
       });
 
-    } catch (e: any) {
-      const message = e?.message || "Failed to analyze image";
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to analyze image";
       setError(message);
 
     } finally {
