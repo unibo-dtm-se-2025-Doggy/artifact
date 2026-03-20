@@ -13,6 +13,7 @@ Repository modules:
 - `web/`: React + TypeScript + Vite frontend
 - `openapi/`: API specification (`openapi.yaml`)
 - `.github/workflows/`: CI/CD workflows for backend and web
+- `.vscode/`: VS Code tasks for setup and local run
 - `docs/`: project documentation files
 - `LICENSE`: project license (MIT)
 - `CHANGELOG.md`: release notes and documented changes
@@ -42,6 +43,8 @@ artifact/
 |  `- package.json
 |- openapi/
 |  `- openapi.yaml
+|- .vscode/
+|  `- tasks.json
 |- docs/
 |- LICENSE
 |- CHANGELOG.md
@@ -69,6 +72,17 @@ Frontend (terminal 2), from `web/`:
 npm install
 npm run dev
 ```
+
+### Run from VS Code
+
+This repository includes VS Code tasks in `.vscode/tasks.json`.
+
+1. Open project root (`artifact/`) in VS Code.
+2. Run `Terminal -> Run Task...`.
+3. Select one of the prepared tasks:
+   - `App: Bootstrap` for first-time setup + run (backend + frontend)
+   - `App: Start` to start backend and frontend after setup
+   - `Backend: Check` to run backend quality checks
 
 ### Run on web (Fly.io)
 
@@ -127,3 +141,26 @@ Backend and web checks run via GitHub Actions workflows in:
 - `.github/workflows/backend-ci.yml`
 - `.github/workflows/web-ci.yml`
 - `.github/workflows/backend-deploy.yml` (backend deploy on `backend/v*` tags)
+
+## Contributing
+
+Contributions are welcome.
+
+1. Create a feature/fix branch from `dev`.
+2. Make changes and run local checks:
+   - backend: `cd backend && ./check.sh`
+   - frontend: `cd web && npm run lint && npm run test:ci && npm run build`
+3. Open a pull request to `dev` with a short description of changes.
+
+## Authors
+
+Main contributors (by commit history):
+- Diana Zhigalkina
+- Alina Yakubova
+- Sveta Vertegel
+```
+
+## License
+
+This project is licensed under the MIT License.
+See `LICENSE` for details.
