@@ -13,7 +13,9 @@ def dummy_file():
 def test_non_dog_returns_error(monkeypatch):
     client = TestClient(main.app)
 
-    monkeypatch.setattr(api_router, "dog_model", type("M", (), {"is_dog": lambda _, __=None: False})())
+    monkeypatch.setattr(
+        api_router, "dog_model", type("M", (), {"is_dog": lambda _, __=None: False})()
+    )
     monkeypatch.setattr(api_router, "dog_model_init_error", None)
     monkeypatch.setattr(api_router, "llm", object())
     monkeypatch.setattr(api_router, "llm_init_error", None)
