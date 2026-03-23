@@ -15,7 +15,7 @@ class DogLLMEngine:
             raise ValueError("HF_TOKEN is not set in backend/.env")
 
         # Check https://huggingface.co/inference/models for supported alternatives
-        self.model_name = "meta-llama/Llama-3.1-8B-Instruct:scaleway"
+        self.model_name = "openai/gpt-oss-20b"
 
         self.client = InferenceClient(token=hf_token)
 
@@ -45,7 +45,7 @@ Use exactly this format:
                 },
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=200,
+            max_tokens=800,
             temperature=0.3,
         )
 

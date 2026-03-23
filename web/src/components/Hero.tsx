@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Sparkles, Heart, Activity } from "lucide-react";
+import { Sparkles, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Hero = () => {

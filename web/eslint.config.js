@@ -5,16 +5,13 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
-  // игноры
+
   { ignores: ["dist/**", "node_modules/**"] },
 
-  // базовые рекомендации JS
   js.configs.recommended,
 
-  // рекомендации для TS (включая parser)
   ...tseslint.configs.recommended,
 
-  // правила для TS/React файлов
   {
     files: ["**/*.{ts,tsx,js,jsx}"],
     languageOptions: {
@@ -32,8 +29,6 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
-
-      // чтобы не ругался на __dirname в vite.config.ts
       "no-undef": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "warn",

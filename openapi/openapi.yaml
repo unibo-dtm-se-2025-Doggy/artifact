@@ -3,9 +3,6 @@ info:
   title: Doggy API
   version: 0.1.0
   description: Contract for dog breed identification and breed-specific advice.
-servers:
-  - url: http://localhost:8000
-    description: Local backend
 tags:
   - name: System
     description: Service health endpoint

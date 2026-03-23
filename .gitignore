@@ -14,6 +14,16 @@
 
 # Coverage artifacts
 .coverage
+.coverage.*
+
+# Python caches / virtualenvs
+.ruff_cache/
+.mypy_cache/
+venv/
+.venv/
+
+# Node dependencies
+node_modules/
 
 # OS
 Thumbs.db
