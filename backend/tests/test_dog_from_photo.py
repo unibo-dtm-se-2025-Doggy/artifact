@@ -20,7 +20,7 @@ def test_non_dog_returns_error(monkeypatch):
     monkeypatch.setattr(api_router, "llm", object())
     monkeypatch.setattr(api_router, "llm_init_error", None)
 
-    resp = client.post("/api/dog-from-photo", files={"file": dummy_file()})
+    resp = client.post("/api/v1/dog-from-photo", files={"file": dummy_file()})
     assert resp.status_code == 200
     assert resp.json()["error"] == "Sorry, this is not a dog. Please try again"
 
@@ -43,7 +43,7 @@ def test_dog_returns_breed_and_advice(monkeypatch):
     monkeypatch.setattr(api_router, "llm", llm())
     monkeypatch.setattr(api_router, "llm_init_error", None)
 
-    resp = client.post("/api/dog-from-photo", files={"file": dummy_file()})
+    resp = client.post("/api/v1/dog-from-photo", files={"file": dummy_file()})
     data = resp.json()
     assert resp.status_code == 200
     assert data["breed"] == "husky"
@@ -74,7 +74,7 @@ def test_dog_aliases_are_normalized(monkeypatch):
     monkeypatch.setattr(api_router, "llm", llm())
     monkeypatch.setattr(api_router, "llm_init_error", None)
 
-    resp = client.post("/api/dog-from-photo", files={"file": dummy_file()})
+    resp = client.post("/api/v1/dog-from-photo", files={"file": dummy_file()})
     data = resp.json()
     assert resp.status_code == 200
     assert data["breed"] == "German shepherd"
@@ -99,6 +99,6 @@ def test_predict_exception_is_returned(monkeypatch):
     monkeypatch.setattr(api_router, "llm", llm())
     monkeypatch.setattr(api_router, "llm_init_error", None)
 
-    resp = client.post("/api/dog-from-photo", files={"file": dummy_file()})
+    resp = client.post("/api/v1/dog-from-photo", files={"file": dummy_file()})
     assert resp.status_code == 200
     assert resp.json()["error"] == "boom"
