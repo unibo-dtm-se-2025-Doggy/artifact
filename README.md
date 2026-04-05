@@ -14,7 +14,6 @@ Repository modules:
 - `openapi/`: API specification (`openapi.yaml`)
 - `.github/workflows/`: CI/CD workflows for backend and web
 - `.vscode/`: VS Code tasks for setup and local run
-- `docs/`: project documentation files
 - `LICENSE`: project license (MIT)
 - `CHANGELOG.md`: release notes and documented changes
 
@@ -24,6 +23,7 @@ artifact/
 |  |- __init__.py
 |  |- main.py
 |  |- Core/
+|  |  |- interfaces.py
 |  |  `- router.py
 |  |- Features/
 |  |  |- DogRecognition/
@@ -38,6 +38,8 @@ artifact/
 |  |  |- App.tsx
 |  |  |- hooks/
 |  |  |  `- useBreedIdentification.ts
+|  |  |- integrations/
+|  |  |  `- dogApi.ts
 |  |  `- components/ui/
 |  |     `- DogInfoPanel.tsx
 |  `- package.json
@@ -45,7 +47,6 @@ artifact/
 |  `- openapi.yaml
 |- .vscode/
 |  `- tasks.json
-|- docs/
 |- LICENSE
 |- CHANGELOG.md
 `- .github/workflows/
@@ -128,8 +129,8 @@ OpenAPI spec is in:
 Create and push a backend release tag:
 
 ```bash
-git tag backend/v1.0.0
-git push origin backend/v1.0.0
+git tag backend/1.0.0
+git push origin backend/1.0.0
 ```
 
 This triggers `.github/workflows/backend-deploy.yml` and deploys backend to Fly.io.
@@ -140,7 +141,7 @@ This repository does not publish backend packages to PyPI.
 Backend and web checks run via GitHub Actions workflows in:
 - `.github/workflows/backend-ci.yml`
 - `.github/workflows/web-ci.yml`
-- `.github/workflows/backend-deploy.yml` (backend deploy on `backend/v*` tags)
+- `.github/workflows/backend-deploy.yml` (backend deploy on `backend/[0-9]*` tags)
 
 ## Contributing
 

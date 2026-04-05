@@ -10,5 +10,10 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Added
 - Added root `LICENSE` file (MIT).
 - Added root `CHANGELOG.md`.
-- Documented backend release rules: `backend/v*` tags trigger Fly.io deployment via `.github/workflows/backend-deploy.yml`.
+- Documented backend release rules: `backend/MAJOR.MINOR.PATCH` tags trigger Fly.io deployment via `.github/workflows/backend-deploy.yml`.
 - Documented that backend releases in this repository do not publish packages to PyPI.
+
+### Changed
+- Backend API routes versioned to `/api/v1/*` (`/api/v1/dog-advice`, `/api/v1/dog-from-photo`).
+- Added `IDogRecognitionModel` and `IDogLLMEngine` Protocol interfaces in `backend/Core/interfaces.py`.
+- Frontend HTTP logic extracted into `DogApiClient` (`web/src/integrations/dogApi.ts`); `useBreedIdentification` hook now depends on `IDogApiClient` interface.

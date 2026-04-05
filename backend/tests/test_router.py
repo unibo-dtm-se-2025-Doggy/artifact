@@ -16,7 +16,7 @@ def test_router_dog_advice(monkeypatch):
     app.include_router(router.router)
 
     client = TestClient(app)
-    resp = client.get("/api/dog-advice", params={"breed": "husky"})
+    resp = client.get("/dog-advice", params={"breed": "husky"})
 
     assert resp.status_code == 200
     assert resp.json()["advice"] == "Advice for husky"

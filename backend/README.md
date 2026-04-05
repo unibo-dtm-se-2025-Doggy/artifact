@@ -140,21 +140,21 @@ PYTHONPATH=. backend/venv/bin/python -m uvicorn backend.main:app --reload --port
 ## API Endpoints
 
 - `GET /` - Health check endpoint
-- `GET /api/dog-advice?breed=<breed_name>` - Get breed-specific advice
-- `POST /api/dog-from-photo` - Upload a photo to recognize the dog breed and get advice
+- `GET /api/v1/dog-advice?breed=<breed_name>` - Get breed-specific advice
+- `POST /api/v1/dog-from-photo` - Upload a photo to recognize the dog breed and get advice
 
 ## Example Requests
 
 Get breed advice:
 
 ```bash
-curl "http://localhost:8000/api/dog-advice?breed=Golden%20Retriever"
+curl "http://localhost:8000/api/v1/dog-advice?breed=Golden%20Retriever"
 ```
 
 Upload a photo:
 
 ```bash
-curl -X POST "http://localhost:8000/api/dog-from-photo" \
+curl -X POST "http://localhost:8000/api/v1/dog-from-photo" \
   -F "file=@dog_photo.jpg"
 ```
 
@@ -263,11 +263,11 @@ flyctl secrets set HF_TOKEN=your_huggingface_token_here
 
 ### Release Flow
 
-After backend changes are merged, create and push a `backend/v*` tag:
+After backend changes are merged, create and push a `backend/MAJOR.MINOR.PATCH` tag:
 
 ```bash
-git tag backend/v1.0.0
-git push origin backend/v1.0.0
+git tag backend/1.0.0
+git push origin backend/1.0.0
 ```
 
 This tag triggers `.github/workflows/backend-deploy.yml`, which deploys the backend to Fly.io.
