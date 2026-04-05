@@ -140,21 +140,21 @@ PYTHONPATH=. backend/venv/bin/python -m uvicorn backend.main:app --reload --port
 ## API Endpoints
 
 - `GET /` - Health check endpoint
-- `GET /api/dog-advice?breed=<breed_name>` - Get breed-specific advice
-- `POST /api/dog-from-photo` - Upload a photo to recognize the dog breed and get advice
+- `GET /api/v1/dog-advice?breed=<breed_name>` - Get breed-specific advice
+- `POST /api/v1/dog-from-photo` - Upload a photo to recognize the dog breed and get advice
 
 ## Example Requests
 
 Get breed advice:
 
 ```bash
-curl "http://localhost:8000/api/dog-advice?breed=Golden%20Retriever"
+curl "http://localhost:8000/api/v1/dog-advice?breed=Golden%20Retriever"
 ```
 
 Upload a photo:
 
 ```bash
-curl -X POST "http://localhost:8000/api/dog-from-photo" \
+curl -X POST "http://localhost:8000/api/v1/dog-from-photo" \
   -F "file=@dog_photo.jpg"
 ```
 
