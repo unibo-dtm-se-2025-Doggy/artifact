@@ -3,13 +3,14 @@ from __future__ import annotations
 import os
 import uuid
 from importlib import import_module
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from fastapi import APIRouter, File, UploadFile
 
-if TYPE_CHECKING:
-    from backend.Features.DogRecognition.dog_recognition import DogRecognitionModel
-    from backend.Features.LLM.llm_engine import DogLLMEngine
+try:
+    from backend.Core.interfaces import IDogLLMEngine, IDogRecognitionModel
+except ModuleNotFoundError:
+    from Core.interfaces import IDogLLMEngine, IDogRecognitionModel  # type: ignore[no-redef]
 
 try:
     # Running as package: python -m uvicorn backend.main:app
@@ -22,10 +23,10 @@ except ModuleNotFoundError:
 
 router = APIRouter()
 
-llm: DogLLMEngine | None = None
+llm: IDogLLMEngine | None = None
 llm_init_error: str | None = None
 
-dog_model: DogRecognitionModel | None = None
+dog_model: IDogRecognitionModel | None = None
 dog_model_init_error: str | None = None
 
 
@@ -34,7 +35,7 @@ def _normalize_breed_label(label: str) -> str:
     return label.split(",")[0].strip()
 
 
-def _get_llm() -> DogLLMEngine | None:
+def _get_llm() -> IDogLLMEngine | None:
     global llm, llm_init_error
 
     if llm is not None or llm_init_error is not None:
@@ -50,7 +51,7 @@ def _get_llm() -> DogLLMEngine | None:
     return llm
 
 
-def _get_dog_model() -> DogRecognitionModel | None:
+def _get_dog_model() -> IDogRecognitionModel | None:
     global dog_model, dog_model_init_error
 
     if dog_model is not None or dog_model_init_error is not None:
@@ -66,7 +67,7 @@ def _get_dog_model() -> DogRecognitionModel | None:
     return dog_model
 
 
-@router.get("/api/dog-advice")
+@router.get("/dog-advice")
 def dog_advice(breed: str):
     llm_instance = _get_llm()
     if llm_instance is None:
@@ -78,7 +79,7 @@ def dog_advice(breed: str):
         return {"error": str(e)}
 
 
-@router.post("/api/dog-from-photo")
+@router.post("/dog-from-photo")
 async def dog_from_photo(file: UploadFile = File(...)):
     model_instance = _get_dog_model()
     if model_instance is None:

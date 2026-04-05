@@ -24,6 +24,7 @@ artifact/
 |  |- __init__.py
 |  |- main.py
 |  |- Core/
+|  |  |- interfaces.py
 |  |  `- router.py
 |  |- Features/
 |  |  |- DogRecognition/
@@ -38,6 +39,8 @@ artifact/
 |  |  |- App.tsx
 |  |  |- hooks/
 |  |  |  `- useBreedIdentification.ts
+|  |  |- integrations/
+|  |  |  `- dogApi.ts
 |  |  `- components/ui/
 |  |     `- DogInfoPanel.tsx
 |  `- package.json
@@ -140,7 +143,7 @@ This repository does not publish backend packages to PyPI.
 Backend and web checks run via GitHub Actions workflows in:
 - `.github/workflows/backend-ci.yml`
 - `.github/workflows/web-ci.yml`
-- `.github/workflows/backend-deploy.yml` (backend deploy on `backend/v*` tags)
+- `.github/workflows/backend-deploy.yml` (backend deploy on `backend/[0-9]*` tags)
 
 ## Contributing
 

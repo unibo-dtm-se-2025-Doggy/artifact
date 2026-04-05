@@ -27,4 +27,4 @@ def root():
     return {"status": "ok", "message": "backend is running"}
 
 
-app.include_router(router_module.router)
+app.include_router(router_module.router, prefix="/api/v1")
