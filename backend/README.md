@@ -263,11 +263,11 @@ flyctl secrets set HF_TOKEN=your_huggingface_token_here
 
 ### Release Flow
 
-After backend changes are merged, create and push a `backend/v*` tag:
+After backend changes are merged, create and push a `backend/MAJOR.MINOR.PATCH` tag:
 
 ```bash
-git tag backend/v1.0.0
-git push origin backend/v1.0.0
+git tag backend/1.0.0
+git push origin backend/1.0.0
 ```
 
 This tag triggers `.github/workflows/backend-deploy.yml`, which deploys the backend to Fly.io.

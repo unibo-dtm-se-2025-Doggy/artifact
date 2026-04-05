@@ -128,8 +128,8 @@ OpenAPI spec is in:
 Create and push a backend release tag:
 
 ```bash
-git tag backend/v1.0.0
-git push origin backend/v1.0.0
+git tag backend/1.0.0
+git push origin backend/1.0.0
 ```
 
 This triggers `.github/workflows/backend-deploy.yml` and deploys backend to Fly.io.

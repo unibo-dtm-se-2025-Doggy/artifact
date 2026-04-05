@@ -4,7 +4,7 @@ on:
   push:
     tags:
       # Backend release tags deploy to Fly.io. No PyPI publishing is performed here.
-      - 'backend/v*'
+      - 'backend/[0-9]*'
   workflow_dispatch:
 
 jobs:
