@@ -14,7 +14,6 @@ Repository modules:
 - `openapi/`: API specification (`openapi.yaml`)
 - `.github/workflows/`: CI/CD workflows for backend and web
 - `.vscode/`: VS Code tasks for setup and local run
-- `docs/`: project documentation files
 - `LICENSE`: project license (MIT)
 - `CHANGELOG.md`: release notes and documented changes
 
@@ -48,7 +47,6 @@ artifact/
 |  `- openapi.yaml
 |- .vscode/
 |  `- tasks.json
-|- docs/
 |- LICENSE
 |- CHANGELOG.md
 `- .github/workflows/
