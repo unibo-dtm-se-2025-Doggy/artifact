@@ -24,6 +24,7 @@ artifact/
 |  |- __init__.py
 |  |- main.py
 |  |- Core/
+|  |  |- interfaces.py
 |  |  `- router.py
 |  |- Features/
 |  |  |- DogRecognition/
@@ -38,6 +39,8 @@ artifact/
 |  |  |- App.tsx
 |  |  |- hooks/
 |  |  |  `- useBreedIdentification.ts
+|  |  |- integrations/
+|  |  |  `- dogApi.ts
 |  |  `- components/ui/
 |  |     `- DogInfoPanel.tsx
 |  `- package.json

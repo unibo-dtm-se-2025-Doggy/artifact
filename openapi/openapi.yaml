@@ -22,7 +22,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
-  /api/dog-advice:
+  /api/v1/dog-advice:
     get:
       tags:
         - Dog Analysis
@@ -60,7 +60,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPValidationError"
-  /api/dog-from-photo:
+  /api/v1/dog-from-photo:
     post:
       tags:
         - Dog Analysis
