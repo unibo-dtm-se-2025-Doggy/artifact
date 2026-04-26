@@ -61,6 +61,19 @@ artifact/
 
 Backend (terminal 1), from `backend/`:
 
+1. Create a Hugging Face access token (read scope):
+   - Open `https://huggingface.co/settings/tokens`
+   - Click `New token`
+   - Choose `Read` permissions and copy the token
+2. Create `backend/.env` and add your token:
+
+```bash
+cd backend
+echo "HF_TOKEN=your_hf_token_here" > .env
+```
+
+3. Start the backend:
+
 ```bash
 ./setup.sh
 source venv/bin/activate
@@ -159,7 +172,7 @@ Main contributors (by commit history):
 - Diana Zhigalkina
 - Alina Yakubova
 - Sveta Vertegel
-```
+
 
 ## License
 
